@@ -1,0 +1,84 @@
+# Kevin Weldon
+# 1.0 - 01/03/21
+
+SOURCE_FILES       := read_write_example.c
+BSP_DIRECTORY      := software/cpu_hal_bsp
+BSP_FILE           := $(BSP_DIRECTORY)/settings.bsp
+APP_DIRECTORY      := software/cpu_hal_app
+ELF_FILE           := cpu_hal.elf
+HEX_FILE_BASE_ADDR := 0x0
+HEX_FILE_END_ADDR  := 0x0007FFFF
+HEX_FILE_WIDTH     := 32
+
+QUARTUS_PROJECT          := top
+PLATFORM_DESIGNER_SYSTEM := sys.qsys
+HEX_FILE                 := data_instruction_ram.hex
+
+help :
+fpga : $(QUARTUS_PROJECT).sof
+app : $(HEX_FILE)
+
+$(BSP_FILE) : $(PLATFORM_DESIGNER_SYSTEM)
+	mkdir -p $(BSP_DIRECTORY)
+	wsl nios2-bsp hal $(BSP_DIRECTORY) sys/sys.sopcinfo	
+
+$(APP_DIRECTORY)/Makefile : $(BSP_FILE) $(SOURCE_FILES)
+	mkdir -p $(APP_DIRECTORY)
+	cp -f $(SOURCE_FILES) $(APP_DIRECTORY)
+	wsl nios2-app-generate-makefile.exe --bsp-dir $(BSP_DIRECTORY) --app-dir $(APP_DIRECTORY) --elf-name=$(ELF_FILE) --src-files $(APP_DIRECTORY)/$(SOURCE_FILES)
+	
+$(APP_DIRECTORY)/$(ELF_FILE) : $(APP_DIRECTORY)/Makefile
+	cd $(APP_DIRECTORY); wsl make all
+
+$(HEX_FILE) : $(APP_DIRECTORY)/$(ELF_FILE)
+	elf2hex $(APP_DIRECTORY)/$(ELF_FILE) -o $(HEX_FILE) -b $(HEX_FILE_BASE_ADDR) -w $(HEX_FILE_WIDTH) -e $(HEX_FILE_END_ADDR)
+
+$(QUARTUS_PROJECT).sof : $(HEX_FILE) $(PLATFORM_DESIGNER_SYSTEM)
+	quartus_sh --flow compile $(QUARTUS_PROJECT)
+
+reset_and_start:
+	@echo Resetting the design...
+	quartus_stp -t toggle_issp.tcl
+	@echo Capture stdout...
+	juart-terminal
+
+program :
+	@echo Programming FPGA...
+	quartus_stp_tcl -t program_fpga.tcl
+	make reset_and_start
+
+update: 
+	@echo Downloading .elf file
+	wsl nios2-download $(APP_DIRECTORY)/$(ELF_FILE)
+	make reset_and_start
+
+restore :
+	quartus_sh --restore *.qar
+
+clean :
+
+	rm -f *.rpt *.sof *.summary *.smsg *.pin *~
+	rm -f *.qsf *.qpf *.qws *.v *.sv *.sdc *.done *.qsys
+	rm -f *.cdf *.sld *.qarlog *.legacy
+	rm -f *.json *.qdf #*#
+	rm -f *.hex
+	rm -rf tmp-clearbox software
+	rm -rf .qsys_edit ip sys qdb
+
+help :
+	@echo ""
+	@echo " Recognized targets are:"
+	@echo ""
+	@echo " |====================================================================================|"
+	@echo " |   fpga            : Build software application and compile FPGA                    |"
+	@echo " |   program         : Program the .sof file into the FPGA                            |"
+	@echo " |====================================================================================|"
+	@echo " |   app             : Build software application (.elf and .hex file only)           |"
+	@echo " |   update          : Program the .elf file into the FPGA                            |"
+	@echo " |====================================================================================|"
+	@echo " |   clean           : Remove all unarchived and generated files                      |"
+	@echo " |   restore         : Unarchive Quartus project file                                 |"
+	@echo " |====================================================================================|"
+	@echo " |   help            : Display help menu                                              |"
+	@echo " |====================================================================================|"
+	@echo ""
