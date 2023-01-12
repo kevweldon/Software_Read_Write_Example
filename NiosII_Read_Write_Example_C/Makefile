@@ -62,7 +62,7 @@ clean :
 	rm -f *.cdf *.sld *.qarlog *.legacy
 	rm -f *.json *.qdf #*#
 	rm -f *.hex
-	rm -rf tmp-clearbox software
+	rm -rf tmp-clearbox software DNI
 	rm -rf .qsys_edit ip sys qdb
 
 help :
