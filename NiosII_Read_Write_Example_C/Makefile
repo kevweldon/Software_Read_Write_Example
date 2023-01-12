@@ -14,21 +14,30 @@ QUARTUS_PROJECT          := top
 PLATFORM_DESIGNER_SYSTEM := sys.qsys
 HEX_FILE                 := data_instruction_ram.hex
 
+ifeq ($(OS),Windows_NT)
+	WSL=wsl
+	APP_GEN=nios2-app-generate-makefile.exe
+else
+	WSL=
+	APP_GEN=nios2-app-generate-makefile
+endif
+
 help :
 fpga : $(QUARTUS_PROJECT).sof
 app : $(HEX_FILE)
 
 $(BSP_FILE) : $(PLATFORM_DESIGNER_SYSTEM)
 	mkdir -p $(BSP_DIRECTORY)
-	wsl nios2-bsp hal $(BSP_DIRECTORY) sys/sys.sopcinfo	
+	$(WSL) nios2-bsp hal $(BSP_DIRECTORY) sys/sys.sopcinfo
 
 $(APP_DIRECTORY)/Makefile : $(BSP_FILE) $(SOURCE_FILES)
 	mkdir -p $(APP_DIRECTORY)
 	cp -f $(SOURCE_FILES) $(APP_DIRECTORY)
-	wsl nios2-app-generate-makefile.exe --bsp-dir $(BSP_DIRECTORY) --app-dir $(APP_DIRECTORY) --elf-name=$(ELF_FILE) --src-files $(APP_DIRECTORY)/$(SOURCE_FILES)
-	
+	echo $(APP_GEN)
+	$(WSL) $(APP_GEN) --bsp-dir $(BSP_DIRECTORY) --app-dir $(APP_DIRECTORY) --elf-name=$(ELF_FILE) --src-files $(APP_DIRECTORY)/$(SOURCE_FILES)
+
 $(APP_DIRECTORY)/$(ELF_FILE) : $(APP_DIRECTORY)/Makefile
-	cd $(APP_DIRECTORY); wsl make all
+	cd $(APP_DIRECTORY); $(WSL) make all
 
 $(HEX_FILE) : $(APP_DIRECTORY)/$(ELF_FILE)
 	elf2hex $(APP_DIRECTORY)/$(ELF_FILE) -o $(HEX_FILE) -b $(HEX_FILE_BASE_ADDR) -w $(HEX_FILE_WIDTH) -e $(HEX_FILE_END_ADDR)
@@ -49,7 +58,7 @@ program :
 
 update: 
 	@echo Downloading .elf file
-	wsl nios2-download $(APP_DIRECTORY)/$(ELF_FILE)
+	$(WSL) nios2-download $(APP_DIRECTORY)/$(ELF_FILE)
 	make reset_and_start
 
 restore :
