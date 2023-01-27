@@ -1,0 +1,29 @@
+set_global_assignment -name TOP_LEVEL_ENTITY top
+set_global_assignment -name ORIGINAL_QUARTUS_VERSION 21.3.0
+set_global_assignment -name PROJECT_CREATION_TIME_DATE "09:08:43  JULY 26, 2021"
+set_global_assignment -name LAST_QUARTUS_VERSION "22.4.0 Pro Edition"
+set_global_assignment -name FAMILY "Arria 10"
+set_global_assignment -name DEVICE 10AX115S3F45E2SGE3
+
+set_location_assignment PIN_AU33 -to clk
+set_instance_assignment -name IO_STANDARD "1.8 V" -to clk -entity top
+
+set_global_assignment -name STA_AUTO_UPDATE_TIMING_NETLIST OFF
+set_global_assignment -name FLOW_ENABLE_INTERACTIVE_TIMING_ANALYZER OFF
+set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
+set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
+set_global_assignment -name SYSTEMVERILOG_FILE top.sv
+set_global_assignment -name TCL_SCRIPT_FILE toggle_issp.tcl
+set_global_assignment -name TCL_SCRIPT_FILE program_fpga.tcl
+set_global_assignment -name IP_FILE ip/sys/sys_clock_in.ip
+set_global_assignment -name IP_FILE ip/sys/cpu.ip
+set_global_assignment -name IP_FILE ip/sys/jtag_uart.ip
+set_global_assignment -name IP_FILE ip/sys/sys_reset_in.ip
+set_global_assignment -name QSYS_FILE sys.qsys
+set_global_assignment -name SDC_FILE top.sdc
+set_global_assignment -name IP_FILE ip/sys/ram_32bit.ip
+set_global_assignment -name IP_FILE ip/sys/data_instruction_ram.ip
+set_global_assignment -name IP_FILE ip/sys/pio_8bit.ip
+set_location_assignment PIN_L28 -to led
+set_instance_assignment -name IO_STANDARD "1.8 V" -to led
+set_global_assignment -name BOARD default

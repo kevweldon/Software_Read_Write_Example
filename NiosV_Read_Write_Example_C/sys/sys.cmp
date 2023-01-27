@@ -1,0 +1,8 @@
+	component sys is
+		port (
+			clk_clk         : in  std_logic                    := 'X'; -- clk
+			pio_8bit_export : out std_logic_vector(7 downto 0);        -- export
+			reset_reset     : in  std_logic                    := 'X'  -- reset
+		);
+	end component sys;
+
