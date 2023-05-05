@@ -65,7 +65,7 @@ clean :
 	rm -f *.qsf *.qpf *.qws *.v *.sv *.sdc *.done *.qsys
 	rm -f *.cdf *.sld *.qarlog *.legacy
 	rm -f *.json *.qdf #*#
-	rm -f *.hex
+	rm -f *.hex *.xml
 	rm -rf tmp-clearbox software
 	rm -rf .qsys_edit ip sys qdb DNI
 
