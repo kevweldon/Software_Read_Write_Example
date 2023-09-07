@@ -3,6 +3,9 @@ echo.
 echo This script will check to ensure your PATH environment variable
 echo is set correctly.
 echo.
+echo Testing riscvv32-unknown-elf-gcc path...
+where riscv32-unknown-elf-gcc
+echo.
 echo Testing xpack-riscv-none-embed-gcc path...
 where riscv-none-embed-ar
 echo.
