@@ -57,7 +57,7 @@ update:
 	make reset_and_start
 
 restore :
-	quartus_sh --restore top_23_3_0_104.qar
+	quartus_sh --restore top_23_4_0_79.qar
 
 clean :
 
@@ -69,7 +69,7 @@ clean :
 	rm -f *.hex *.xml serv_req_info.txt *.sldtmp
 	rm -rf tmp-clearbox software
 	rm -rf .qsys_edit ip sys qdb
-	rm -rf DNI
+	rm -rf dni DNI sandboxes ip_upgrade_port_diff_reports
 
 help :
 	@echo ""

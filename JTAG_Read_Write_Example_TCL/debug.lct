@@ -1,0 +1,52 @@
+
+
+proc main {} {
+    set ONCHIP_MEMORY2_0_BASE 0x00000100
+
+    #########################
+    # Open the service path #
+    #########################
+    set jm [get_jtag_master];
+    puts "Opening master: $jm\n"
+    open_service master $jm
+    
+    #############################
+    # Read and write 32-bit RAM #
+    #############################
+    # Write to the first location in the 32-bit RAM
+    master_write_32 $jm $ONCHIP_MEMORY2_0_BASE 0x01234567
+    # Write to the second location in the 32-bit RAM
+    master_write_32 $jm [expr $ONCHIP_MEMORY2_0_BASE+4] 0x89ABCDEF
+    # Read the first location in the 32-bit RAM
+    set read_value [master_read_32 $jm $ONCHIP_MEMORY2_0_BASE 1]
+    puts "Read $read_value at address $ONCHIP_MEMORY2_0_BASE"
+    # Read the second location in the 32-bit RAM
+    set read_value [master_read_32 $jm [expr $ONCHIP_MEMORY2_0_BASE+4] 1]
+    puts "Read $read_value at address 0x[format %08X [expr $ONCHIP_MEMORY2_0_BASE+4]]"
+    
+    close_service master $jm
+
+    return 0;
+}
+
+proc get_jtag_master {} {
+    #########################
+    # Open the service path #
+    #########################
+    # You may need to adjust the value of the MASTER_INDEX
+    set MASTER_INDEX 0
+    puts "Opening JTAG master service path..."
+    set i 0
+    # Print all the masters found in the system. Here we need
+    # to select the jtag2avalon master
+    puts "I found the following masters:"
+    foreach master [get_service_paths master] {
+	puts "$i. $master"
+	incr i
+    }
+    set jm [ lindex [ get_service_paths master ] $MASTER_INDEX ]
+    return $jm
+}
+
+
+main;

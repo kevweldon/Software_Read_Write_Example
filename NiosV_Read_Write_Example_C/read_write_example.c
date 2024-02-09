@@ -20,7 +20,7 @@ int main() {
   read_value = IORD_32DIRECT(RAM_32BIT_BASE,4);
   printf("Read 0x%08X at address 0x%08X\n", read_value, RAM_32BIT_BASE+4);
 
-  printf("\nCtrl-C to exit.\n");
+  printf("\nPress Ctrl-C to exit.\n");
 
   ///////////////////
   // Blink the LED //
