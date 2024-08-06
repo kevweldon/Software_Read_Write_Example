@@ -57,7 +57,7 @@ update:
 	make reset_and_start
 
 restore :
-	quartus_sh --restore top_24_1_0_115.qar
+	quartus_sh --restore top_24_2_0_40.qar
 
 clean :
 
@@ -65,6 +65,7 @@ clean :
 	rm -f *.qsf *.qpf *.qws *.v *.sv *.sdc *.done *.qsys
 	rm -f *.cdf *.sld *.qarlog *.legacy
 	rm -f *.json *.qdf #*#
+	rm -f *.info
 	rm -rf *.save *.rec *.log
 	rm -f *.hex *.xml serv_req_info.txt *.sldtmp
 	rm -rf tmp-clearbox software
